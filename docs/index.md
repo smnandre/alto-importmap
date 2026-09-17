@@ -14,3 +14,9 @@ Alto Importmap builds, loads, combines, renders, and resolves JavaScript import 
 - [Resolution](resolution.md) resolves exact, prefix, scoped, and URL-like specifiers.
 
 The package represents import maps and returns HTML or resolution data. It does not download JavaScript modules or write configuration files.
+
+## Package
+
+- [Changelog](https://github.com/altophp/importmap/blob/main/CHANGELOG.md)
+- [Contributing](https://github.com/altophp/importmap/blob/main/CONTRIBUTING.md)
+- [Support](https://github.com/altophp/importmap/blob/main/SUPPORT.md)

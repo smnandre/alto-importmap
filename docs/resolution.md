@@ -28,6 +28,15 @@ echo $dependency['url'].PHP_EOL;
 echo $scoped['url'].PHP_EOL;
 ```
 
+Output:
+
+```text
+/assets/app.js
+sha384-example
+/assets/vendor/router.js
+/assets/admin.js
+```
+
 `resolve(string $specifier, ImportMap $map, ?string $referencingUrl = null): array` returns an array with `url` and nullable `integrity` keys.
 
 Resolution proceeds in this order:
@@ -58,6 +67,21 @@ try {
 }
 ```
 
+Output:
+
+```text
+Resolution blocked by null entry for 'legacy'.
+```
+
 An exact null mapping throws `ResolutionFailedException`. An unmatched bare specifier throws its `SpecifierNotFoundException` subclass. Catch `ResolutionFailedException` when both outcomes require the same handling.
+
+For a missing bare specifier, check its spelling and add the intended mapping.
+For a blocked mapping, remove or replace the deliberate `null` entry only when
+the application should permit that dependency. Check the referencing URL when
+a scope is not selected; the longest matching scope takes precedence.
+
+The PHP resolver returns configured addresses or URL-like input. It does not
+fetch modules, resolve relative URLs against a browser document, or prove that a
+URL exists. The browser resolves module URLs in its own document context.
 
 Custom resolvers implement the same `ResolverInterface::resolve()` contract and may throw package exceptions implementing `ExceptionInterface`.

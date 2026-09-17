@@ -33,9 +33,35 @@ $map->addEntry(
 echo json_encode($map, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
 ```
 
+Output:
+
+```text
+{
+    "imports": {
+        "app": "\/assets\/app.js",
+        "vendor\/": "\/assets\/vendor\/",
+        "legacy": null
+    },
+    "scopes": {
+        "\/admin\/": {
+            "ui": "\/assets\/admin-ui.js"
+        },
+        "\/reports\/": {
+            "charts": "\/assets\/charts.js"
+        }
+    },
+    "integrity": {
+        "\/assets\/app.js": "sha384-example"
+    }
+}
+```
+
 `add(string $specifier, ?string $address, ?string $integrity = null, ?string $scope = null)` is a shortcut around `addEntry(MapEntry $entry, ?string $scope = null)`.
 
 An empty specifier throws `InvalidEntryException`. When a specifier ends with `/`, its non-null address must also end with `/`; this keeps prefix resolution well-defined.
+
+If an entry is rejected, supply a non-empty specifier and ensure prefix keys
+and addresses both end in `/`. Use a concrete file address for an exact mapping.
 
 Integrity is stored by address, not by specifier. Adding an integrity value to a scoped or top-level entry therefore makes it available whenever that exact address is resolved.
 
@@ -66,6 +92,13 @@ foreach ($fromJson as $specifier => $address) {
 }
 ```
 
+Output:
+
+```text
+1 top-level import(s)
+editor -> /assets/editor.js
+```
+
 `fromJson()` throws `JsonException` for invalid JSON. `fromFile()` reads the same structure and throws `RuntimeException` when the path does not exist or cannot be read.
 
 `count()` and iteration cover top-level imports only. `json_encode()` omits empty sections, except that an entirely empty map currently serializes as `[]`.
@@ -87,6 +120,12 @@ $feature = new ImportMap(imports: ['charts' => '/assets/charts.js']);
 $application->merge($feature);
 
 echo json_encode($application, JSON_THROW_ON_ERROR);
+```
+
+Output:
+
+```text
+{"imports":{"app":"\/assets\/app.js","charts":"\/assets\/charts.js"}}
 ```
 
 Top-level imports and integrity entries merge individually. A scope from the other map replaces the complete scope with the same prefix; merge the entries yourself first when two maps must contribute to one scope.

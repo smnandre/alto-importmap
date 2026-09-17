@@ -20,6 +20,13 @@ $html = (new HtmlRenderer())->render($map, preload: true);
 echo $html;
 ```
 
+Output:
+
+```html
+<script type="importmap">{"imports":{"app":"/assets/app.js","blocked":null},"scopes":{"/admin/":{"admin":"/assets/admin.js"}},"integrity":{"/assets/app.js":"sha384-example"}}</script>
+<link rel="modulepreload" href="/assets/app.js">
+```
+
 The JSON includes imports, scopes, null mappings, and integrity metadata. Encoding uses `JSON_THROW_ON_ERROR`, unescaped slashes, and the `JSON_HEX_*` flags so map content cannot close the script element.
 
 Preload links are generated only for non-null top-level imports. Scoped entries are not preloaded, and integrity metadata is not added as an HTML `integrity` attribute. Disable every preload link with `preload: false` when the application needs a different strategy.
@@ -29,3 +36,8 @@ Addresses in preload links are escaped with `htmlspecialchars()` before insertio
 Custom renderers implement:
 
 `RendererInterface::render(ImportMap $map, bool $preload = true): string`
+
+Insert the generated map before scripts that import its specifiers. If a module
+request fails, inspect the rendered URL and the browser network response; creating
+a mapping does not publish or download the file. The package does not validate
+integrity hashes against remote content.
